@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Севилья · Петля порта</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#e8b860; --bg:#0c0a07; --ring-1:#1a1714; --ring-2:#2a2520;
+  --text:rgba(255,255,255,.9); --dim:rgba(255,255,255,.5);
+  --font-title:'Montserrat',sans-serif; --font-text:'Mulish',sans-serif;
+}
+body{background:#080604;font-family:var(--font-text);color:var(--text);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:26px 16px 60px;}
+.h1{font-family:var(--font-title);font-size:12px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:6px;}
+.sub{font-size:12px;color:var(--dim);margin-bottom:20px;text-align:center;max-width:380px;line-height:1.5;}
+
+.phone{width:380px;max-width:100%;height:760px;position:relative;border-radius:40px;
+  background:var(--bg);box-shadow:0 0 0 9px var(--ring-1),0 0 0 10px var(--ring-2),0 30px 72px rgba(0,0,0,.85);
+  overflow:hidden;}
+
+/* фон-сцена */
+.scene-bg{position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:opacity .5s;}
+.scrim{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(8,6,4,.25) 0%,transparent 26%,transparent 40%,rgba(8,6,4,.72) 72%,rgba(8,6,4,.95) 100%);}
+
+/* HUD петли */
+.hud{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;
+  justify-content:space-between;padding:18px 22px 0;
+  font-family:var(--font-title);font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.hud .loop{color:var(--gold);font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.hud .clock{color:rgba(255,255,255,.7);font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.hud .items{color:rgba(255,255,255,.75);font-weight:600;font-size:13px;letter-spacing:0;text-shadow:0 1px 6px rgba(0,0,0,.9);}
+
+/* контент снизу */
+.content{position:absolute;left:0;right:0;bottom:0;z-index:20;padding:22px 22px 24px;
+  max-height:66%;overflow-y:auto;}
+.content::-webkit-scrollbar{width:0;}
+.eyebrow{font-family:var(--font-title);font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:9px;text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.title{font-family:var(--font-title);font-size:21px;font-weight:600;letter-spacing:.5px;
+  color:#fff;margin-bottom:13px;line-height:1.22;text-shadow:0 2px 12px rgba(0,0,0,.9);}
+.body{font-size:14.5px;line-height:1.6;color:var(--text);margin-bottom:6px;text-shadow:0 1px 10px rgba(0,0,0,.9);}
+.body.end{font-style:italic;color:var(--gold);border-top:1px solid rgba(232,184,96,.3);
+  margin-top:14px;padding-top:13px;font-size:14px;}
+.note{font-size:12px;color:var(--gold);margin:9px 0 0;font-style:italic;text-shadow:0 1px 8px rgba(0,0,0,.9);}
+.note.dim{color:rgba(255,255,255,.5);}
+
+/* выборы */
+.choices{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.choice{text-align:left;background:rgba(20,14,8,.62);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:13px;padding:12px 15px;
+  font-family:var(--font-text);font-size:14px;cursor:pointer;transition:.16s;
+  display:flex;align-items:center;gap:10px;}
+.choice:hover{background:rgba(232,184,96,.16);border-color:rgba(232,184,96,.5);transform:translateX(2px);}
+.choice .arr{color:var(--gold);font-size:12px;flex-shrink:0;}
+.choice.talk{border-color:rgba(232,184,96,.4);background:rgba(232,184,96,.1);}
+.choice.special{border-color:rgba(232,184,96,.4);background:rgba(232,184,96,.12);}
+.choice .tag{margin-left:auto;font-family:var(--font-title);font-size:8px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);opacity:.85;}
+.restart{margin-top:12px;width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.16);
+  color:var(--dim);border-radius:11px;padding:11px;font-family:var(--font-title);font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.restart:hover{color:#fff;border-color:rgba(255,255,255,.3);}
+
+/* ── ДИАЛОГОВАЯ ШТОРКА ── */
+.sheet-scrim{position:absolute;inset:0;z-index:40;background:rgba(4,3,2,.5);
+  opacity:0;pointer-events:none;transition:.3s;}
+.sheet-scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;height:74%;
+  background:linear-gradient(to bottom,#16110b,#0c0907);
+  border-radius:26px 26px 40px 40px;border-top:1px solid rgba(232,184,96,.25);
+  box-shadow:0 -20px 50px rgba(0,0,0,.7);transform:translateY(100%);transition:transform .34s cubic-bezier(.22,1,.36,1);
+  display:flex;flex-direction:column;padding:12px 20px 20px;}
+.sheet.open{transform:translateY(0);}
+.handle{width:42px;height:4px;border-radius:3px;background:rgba(255,255,255,.25);margin:0 auto 14px;cursor:pointer;}
+.sheet-head{display:flex;align-items:center;gap:13px;margin-bottom:14px;flex-shrink:0;}
+.por{width:54px;height:54px;border-radius:50%;background-size:cover;background-position:center top;
+  border:1.5px solid rgba(232,184,96,.5);flex-shrink:0;}
+.por.mono{display:flex;align-items:center;justify-content:center;background:rgba(232,184,96,.14);
+  font-family:var(--font-title);font-size:22px;font-weight:700;color:var(--gold);}
+.por-name{font-family:var(--font-title);font-size:13px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:#fff;}
+.por-role{font-size:12px;color:var(--gold);margin-top:2px;}
+
+.log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:11px;padding-right:4px;margin-bottom:12px;}
+.log::-webkit-scrollbar{width:3px;}
+.log::-webkit-scrollbar-thumb{background:rgba(232,184,96,.3);border-radius:3px;}
+.bubble{font-size:14px;line-height:1.55;}
+.bubble.them{color:#fff;font-style:italic;}
+.bubble.me{color:var(--gold);text-align:right;font-weight:600;}
+.bubble.me::before{content:"› ";opacity:.6;}
+
+.chips{display:flex;flex-direction:column;gap:7px;flex-shrink:0;margin-bottom:10px;}
+.chip{text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.85);border-radius:11px;padding:9px 13px;font-family:var(--font-text);
+  font-size:13px;cursor:pointer;transition:.15s;}
+.chip:hover{background:rgba(232,184,96,.13);border-color:rgba(232,184,96,.4);}
+.chip.asked{opacity:.4;pointer-events:none;}
+.free{display:flex;gap:7px;flex-shrink:0;margin-bottom:10px;}
+.free input{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  padding:9px 12px;color:#fff;font-family:var(--font-text);font-size:13px;}
+.free input::placeholder{color:rgba(255,255,255,.3);}
+.free button{background:rgba(232,184,96,.16);border:1px solid rgba(232,184,96,.4);color:var(--gold);
+  border-radius:10px;padding:0 15px;font-family:var(--font-title);font-size:13px;cursor:pointer;}
+.farewell{flex-shrink:0;background:none;border:1px solid rgba(232,184,96,.35);color:var(--gold);
+  border-radius:11px;padding:11px;font-family:var(--font-title);font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;}
+.farewell:hover{background:rgba(232,184,96,.1);}
+
+#flash{position:absolute;inset:0;background:#e8b860;opacity:0;pointer-events:none;z-index:50;transition:opacity .4s;border-radius:40px;}
+
+/* кнопка звука */
+.music-btn{position:absolute;top:52px;right:18px;z-index:45;width:36px;height:36px;border-radius:50%;
+  background:rgba(20,14,8,.6);backdrop-filter:blur(8px);border:1px solid rgba(232,184,96,.35);
+  color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;}
+.music-btn:hover{background:rgba(232,184,96,.18);}
+.music-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.music-btn.muted{color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.2);}
+</style>
+</head>
+<body>
+
+<div class="h1">Севилья · Петля порта</div>
+<div class="sub">Супер-история с механикой петли. Тапни «заговорить» — снизу поднимется диалог с портретом, «попрощаться» закроет. Память переносится сквозь сбросы.</div>
+
+<div class="phone">
+  <div class="scene-bg" id="bg"></div>
+  <div class="scrim"></div>
+  <div class="hud">
+    <div class="loop" id="hudLoop">Петля 1</div>
+    <div class="items" id="hudItems"></div>
+    <div class="clock" id="hudClock">—</div>
+  </div>
+  <div class="content" id="content"></div>
+
+  <div class="sheet-scrim" id="sheetScrim" onclick="closeDialog()"></div>
+  <div class="sheet" id="sheet"></div>
+
+  <button class="music-btn" id="musicBtn" onclick="toggleMusic(event)" title="Музыка">
+    <svg id="musicIcon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  </button>
+  <audio id="music" loop preload="auto" src="art/lumiere.mp3"></audio>
+
+  <div id="flash"></div>
+</div>
+
+<script>
+const IMGDIR='art/';
+const POR=IMGDIR+'portraits/';
+
+const IMG={ p0_cathedral:'01_cathedral',p0_leave:'01_cathedral',p0_fall:'02_fall',
+ L1_arenal:'03_arenal',L1_torre:'04_torre',L1_cathedral_site:'05_cathedral_site',
+ L1_triana_tavern:'06_triana_tavern',L1_bell:'07_bell',L2_casa:'08_casa',
+ L2_delacosa:'09_delacosa',L3_columbus_secret:'10_columbus_secret',L4_paradox:'11_paradox',
+ L4_inverse:'12_inverse',L4_queen:'13_queen',END_bootstrap:'14_end_bootstrap',
+ END_inverse:'15_end_inverse',END_sacrifice:'16_end_sacrifice',END_codicil:'17_end_codicil',
+ END_truth:'18_end_truth',END_magellan:'19_end_magellan',END_spin:'20_end_spin' };
+
+const S={ loop:1, flags:{}, items:{}, asked:{} };
+const ITEM_LABEL={ astrolabe:'⚙', coin:'🪙', map:'🗺' };
+function has(f){return !!S.flags[f];}
+function item(i){return !!S.items[i];}
+function renderItems(){
+  const l=Object.keys(S.items).filter(i=>S.items[i]).map(i=>ITEM_LABEL[i]||i);
+  document.getElementById('hudItems').textContent=l.join(' ');
+}
+
+const SC={
+p0_cathedral:{eye:'Наши дни · Севильский собор',clock:'—',title:'Гробница Колумба',
+  body:`Четыре бронзовых короля несут гроб Колумба на плечах — Кастилия, Леон, Арагон, Наварра. Его кости пересекли океан четырежды живыми и один раз мёртвыми. Ты кладёшь ладонь на холодный металл. Где-то наверху бьёт колокол.`,
+  choices:[{label:'Не отнимать руку, слушать колокол',to:'p0_fall'},
+           {label:'Отойти, идти дальше по собору',to:'p0_leave'}]},
+p0_leave:{eye:'Наши дни',clock:'—',title:'Ты отнимаешь руку',end:true,
+  body:`Колокол стихает. Собор снова просто собор. Ты идёшь дальше — к обычной прогулке.`,
+  bodyEnd:`Иногда дверь нужно толкнуть, чтобы она открылась. Ты прошёл мимо.`,choices:[]},
+p0_fall:{eye:'Наши дни · Время гнётся',clock:'—',title:'Свет идёт назад',
+  body:`Звон не затихает — он втягивается обратно в колокол. Свет сворачивается воронкой. Пол под тобой становится водой. Четыре бронзовых короля поворачивают головы и смотрят на тебя.`,
+  choices:[{label:'Падать',to:'L1_arenal',flash:true,clock:'Полдень'}]},
+
+L1_arenal:{eye:'1504 · Причал Ареналь',clock:'Полдень',title:'Порт начала мира',
+  body:()=>S.loop===1
+   ?`Каравеллы покачиваются, с них катят бочки, кричат на десяти языках. Вверх по реке — Золотая башня. Пахнет смолой и пряностями из-за океана. Молодой моряк ловит тебя за плечо.`
+   :`Снова причал. Снова крик: «Эй, ты белый как парус. Первый раз в порту?» Родриго не помнит. Ты помнишь всё.`,
+  npc:{name:'Родриго',role:'моряк',greet:'«Держись меня, сухопутный. Тут зазеваешься — оберут до нитки».',
+    qa:[{q:'Какой сейчас год?',a:'«Тысяча пятьсот четвёртый. Ты головой не ударился? Идём, налью».'},
+        {q:'Что это за корабли?',a:'«Из Индий, из-за Моря-океана. Я сам ходил с Адмиралом. Видишь старика на башне? Это он».'},
+        {q:'Какой старик?',a:'«Колон. Адмирал Моря-океана. Вернулся месяц назад, больной, злой. Корона всё обещала — отняла всё».'}]},
+  choices:[{label:'К старику на Золотой башне',to:'L1_torre',arr:true},
+           {label:'В город, к собору-стройке',to:'L1_cathedral_site',arr:true},
+           {label:'За Родриго, в таверну Трианы',to:'L1_triana_tavern',arr:true},
+           {label:'Сразу в Торговую палату — ты знаешь дорогу',to:'L2_casa',need:'knowsCasa',special:'Память'},
+           {label:'Не к колоколу — на отплывающий корабль',to:'END_magellan',needLoopMin:3,special:'Иной путь'}]},
+
+L1_torre:{eye:'1504 · Золотая башня',clock:'Сумерки',title:'Адмирал на башне',
+  body:`На верху башни — старик, кутается в потёртый плащ, смотрит вниз по реке, туда, где она уходит к морю. «Ты тоже пришёл посмотреть на старого дурака, который подарил короне новый мир и получил цепи?»`,
+  npc:{name:'Колумб',role:'Адмирал Моря-океана',por:'columbus',greet:'«Стой где стоишь. Я устал от лиц, которые хотят моих историй».',
+    qa:[{q:'Вы правда открыли новый мир?',a:'«Я искал Индии. Нашёл землю, которой нет на картах. Может, я лгал даже себе. Скоро узнаю».'},
+        {q:'Почему вы один?',a:'«Королева больна. Она одна меня помнила. Слышишь топот? Это гонец. Везёт весть, которую я не хочу услышать».',set:'heardMessenger'},
+        {q:'Что вы видите на реке?',a:'«Дорогу обратно. И вперёд. Они — одна дорога. Океан не помнит, в какую сторону ты плыл».',set:'columbusHint'}]},
+  choices:[{label:'Спуститься, идти к собору',to:'L1_cathedral_site',arr:true},
+           {label:'Бежать навстречу гонцу',to:'L4_queen',need:'heardMessenger',arr:true},
+           {label:'Сказать: «Этот день повторяется»',to:'L3_columbus_secret',need:'knowsLoop',special:'Память'}]},
+
+L1_cathedral_site:{eye:'1504 · Стройка собора',clock:'День',title:'Монах, который ждал',
+  body:`Собор ещё строят — леса до неба, пыль, скрип воротов. Рядом — старая башня бывшего минарета. Худой монах смотрит на тебя так, будто узнал. «Ты пришёл по реке, которая течёт не туда. Я тебя ждал. Снова».`,
+  npc:{name:'Фрай Бартоломе',role:'монах',greet:'«Не пугайся слова "снова". Ты услышишь его ещё много раз».',
+    qa:[{q:'Откуда вы меня знаете?',a:'«Колокол этой башни звонит сквозь время. Кто его слышал у гробницы, тот падает сюда. Ты не первый. Но, может, последний».',set:'knowsLoop'},
+        {q:'Что со мной происходит?',a:'«День сомкнулся в кольцо. Выйдешь, когда найдёшь узел — то, что сам завязал и не помнишь».',set:'knowsLoop'},
+        {q:'Как разорвать кольцо?',a:'«Не разорвать. Замкнуть. Это разные вещи, и ты поймёшь разницу слишком поздно — или вовремя».',set:'knowsLoop'}]},
+  choices:[{label:'В таверну Трианы',to:'L1_triana_tavern',arr:true},
+           {label:'К колоколу на башне',to:'L1_bell',arr:true},
+           {label:'Искать Торговую палату',to:'L2_casa',need:'knowsLoop',arr:true}]},
+
+L1_triana_tavern:{eye:'1504 · Триана',clock:'Вечер',title:'Свеча в углу',
+  body:`Низкий потолок, бочки, чад. Хромой хозяин разливает вино. В углу, у свечи, девушка перерисовывает карту — быстро, оглядываясь на дверь. Женщине нельзя чертить карты Палаты. Она поднимает глаза так, будто этот взгляд уже был.`,
+  npc:{name:'Беатриз',role:'копировщица карт',por:'beatriz',greet:'«Не смотри на лист. И я тебя не видела. Понял?»',
+    qa:[{q:'Что ты рисуешь?',a:'«То, что мужчинам можно, а мне нельзя. Берега за океаном. Отец печатник, ослеп. Кто-то должен кормить дом».',set:'metBeatriz'},
+        {q:'Мы не встречались?',a:'«...Мне снится один и тот же чужак. Лицо не из этого века. Уходи, пока я не поверила, что это ты».',set:'metBeatriz'},
+        {q:'Что за линия тебе не даётся?',a:'«Северный берег земли Колона. Никто не плавал, никто не знает формы. Пустота на карте — как ложь».',set:'mapHint'}]},
+  npc2:{name:'Эль Кохо',role:'хозяин таверны',greet:'«Триана — другой берег. Сюда кольцо дотягивается слабее. На, держи на удачу».',
+    qa:[{q:'Почему у вас спокойнее?',a:'«Тут можно перевести дух. А это тебе — монета этого года. Спрячь. Такие штуки иногда... остаются».',give:'coin'}]},
+  choices:[{label:'К колоколу — ждать полночь',to:'L1_bell',arr:true},
+           {label:'В Торговую палату',to:'L2_casa',need:'knowsLoop',arr:true}]},
+
+L1_bell:{eye:'1504 · Полночь',clock:'Полночь',title:'Колокол',
+  body:`Полночь. Колокол на старой башне раскачивается сам. Первый удар — город дрожит, как отражение в воде. Второй — улицы складываются. Третий — ты снова на причале Ареналь, утро.`,
+  note:'Память переносится. Родриго — нет.',
+  choices:[{label:'Начать петлю заново, зная больше',to:'L1_arenal',flash:true,loop:true,clock:'Полдень',set:'knowsLoop'}]},
+
+L2_casa:{eye:'1504 · Каса-де-Контратасьон',clock:'День',title:'Сердце всех плаваний',onEnter:'knowsCasa',
+  body:`В Алькасаре — Торговая палата, монополия на все плавания к Индиям. Залы карт, глобусов, журналов. Над огромной картой спорят кормчие. Один — быстрый, с итальянским выговором — машет тебе: «Ты смотришь на карту, как человек, который уже знает, что там нарисуют завтра».`,
+  npc:{name:'Веспуччи',role:'мореход',por:'vespucci',greet:'«Веспуччи. Флорентиец на службе у Кастилии. Подойди, не бойся карт».',
+    qa:[{q:'Что это за земля?',a:'«Колон зовёт её Индиями. Но это не Азия. Это новый мир, Mundus Novus. Материк, которого не было ни у Птолемея, ни в Писании».'},
+        {q:'Куда ведут эти берега?',a:'«Никто не знает. Пустота на севере, пустота на юге. Кто заполнит её — перепишет мир».',set:'mapHint'},
+        {q:'Меня тут ищут?',a:'«Тише. Дон Фадрике вынюхивает "колдуна, что знает грядущее". Если это ты — беги. Он жжёт таких».'}]},
+  choices:[{label:'Найти картографа де ла Косу',to:'L2_delacosa',arr:true},
+           {label:'Вернуться к Колумбу, спросить про петлю',to:'L3_columbus_secret',need:'knowsLoop',arr:true},
+           {label:'Бежать в Триану',to:'L1_triana_tavern',arr:true}]},
+
+L2_delacosa:{eye:'1504 · Мастерская картографа',clock:'Вечер',title:'Пустое пятно на карте',
+  body:`Картограф склонился над огромной картой — первой в мире, где нарисован новый материк. Зелёные берега, чудовища в океане. И на севере — белое пятно, обведённое тонко, неуверенно. «Я нарисовал всё, что видели люди. Дальше — пустота. Я не вправе выдумывать берег».`,
+  npc:{name:'Хуан де ла Коса',role:'картограф',greet:'«Не дыши на лист. Это единственная карта мира, какой он есть».',
+    qa:[{q:'Что в этом белом пятне?',a:'«Берег, которого никто не видел. Лучше честная пустота, чем красивая ложь. Но Палата требует линию, которой нет».',set:'mapHint'},
+        {q:'А если бы кто-то знал форму берега?',a:'«Тогда он был бы либо пророком, либо лжецом. И я не знаю, кого из них повесят первым».'},
+        {q:'Можно мне перо?',a:'«...Зачем человеку с лицом не из этого века моё перо?» Он всё же кладёт перо на край стола.',set:'penOffered'}]},
+  hint:'В наши дни на стене Архива Индий ты видел эту карту — и северный берег был обведён чужой рукой. Сейчас пятно пустое.',
+  choices:[{label:'Взять перо и дочертить берег по памяти будущего',to:'L4_paradox',need:'penOffered',special:'Парадокс'},
+           {label:'Не трогать карту, искать Колумба',to:'L3_columbus_secret',need:'knowsLoop',arr:true},
+           {label:'Уйти к Беатриз',to:'L1_triana_tavern',arr:true}]},
+
+L3_columbus_secret:{eye:'1504 · Покой при свече',clock:'Ночь',title:'Исповедь Адмирала',
+  body:`Ты говоришь ему: «Этот день повторяется». Колумб впервые оборачивается целиком. В глазах — не удивление, а узнавание. «Значит, ты дошёл. Слушай, пока гонец не доскакал».`,
+  npc:{name:'Колумб',role:'исповедь',por:'columbus',greet:'«Я тоже был в кольце. Четыре плавания — четыре круга по одному океану. Кольцо — это то, что ты не закончил».',
+    qa:[{q:'(взять астролябий)',a:'Кладёт в ладонь старый астролябий. «Он переживёт сброс. Этим найдёшь "того, кто идёт навспять". Он знает выход. Он — это ты, с другого конца кольца».',give:'astrolabe'},
+        {q:'Кто умрёт сегодня?',a:'«Королева. Единственная, кто верил. Но в её последней воле — слова, чтобы заморских людей не превращали в скот. Если они дойдут — может, моё открытие не станет только проклятием».',set:'heardMessenger'}]},
+  choices:[{label:'Искать «того, кто идёт навспять»',to:'L4_inverse',need:'astrolabe',special:'Инверсия'},
+           {label:'Нести волю королевы — гонка со временем',to:'L4_queen',need:'heardMessenger',arr:true},
+           {label:'Дочертить карту',to:'L2_delacosa',arr:true}]},
+
+L4_paradox:{eye:'1504 · Рука на карте',clock:'Ночь',title:'Бутстрап',
+  body:`Перо в твоей руке. Ты ведёшь линию северного берега — изгиб, который видел в атласе, которого ещё пятьсот лет не нарисуют. Де ла Коса смотрит, не дыша. В воздухе дрожит — это та самая линия, что ты видел в Архиве в наши дни. Ты не изменил историю. Ты её сделал.`,
+  set:'mapDone',give:'map',
+  choices:[{label:'Понять, что ты — часть истории навсегда',to:'L4_inverse',arr:true},
+           {label:'Замкнуть кольцо собой',to:'END_bootstrap',special:'Финал'}]},
+
+L4_inverse:{eye:'1504 · Тёмный переулок',clock:'Ночь',title:'Тот, кто идёт навспять',
+  body:`В переулке тебя ждёт фигура в плаще. Астролябий холодеет. Она движется странно: тени ложатся не туда, шаги звучат до того, как нога касается камня. Она поднимает капюшон. Это твоё лицо — старше, измученное сотней петель. «У выхода две двери. Я выбрал свою. Выбери другую».`,
+  npc:{name:'Ты-из-будущего',role:'инверсия',greet:'«Кольцо нельзя разорвать — только замкнуть собой. Либо ты, либо она».',
+    qa:[{q:'Почему именно Беатриз?',a:'«Она помнит петли — значит, может занять твоё место. Но тогда ты бросишь её здесь навсегда».'},
+        {q:'Куда ведёт твоя дверь?',a:'«Домой. И вот я — тень, что ходит навспять, чтобы мой уход стал возможен. Каждый выход чего-то стоит».'}]},
+  choices:[{label:'Уйти домой, оставить Беатриз держать петлю',to:'END_inverse',special:'Финал'},
+           {label:'Остаться, отпустить Беатриз',to:'END_sacrifice',need:'metBeatriz',special:'Финал'},
+           {label:'Не выбирать — уйти с обоими якорями',to:'END_spin',need2:['astrolabe','coin'],special:'???'},
+           {label:'Искать третий путь — волю королевы',to:'L4_queen',need:'heardMessenger',arr:true}]},
+
+L4_queen:{eye:'1504 · Гонка с вестью',clock:'К полуночи',title:'Слой внутри слоя',
+  body:`Топот всё ближе. Гонец везёт весть о смерти королевы — когда она ударит о колокол, день затвердеет навсегда. Ты добегаешь до башни, хватаешься за верёвку — и проваливаешься в покой далеко отсюда. Умирающая женщина диктует писцу последние строки. Изабелла поворачивает к тебе голову, хотя видеть не может.`,
+  npc:{name:'Изабелла',role:'слой-видение',por:'isabella',greet:'«Я отдала всё за земли, которых не видела. Боюсь не Бога — боюсь, что открытое мной станет цепями для живых душ там, за морем».',
+    qa:[{q:'Ваша воля — её услышали?',a:'«Я вписала в завещание: обращаться с ними как с людьми. Скажи: через твоё время — мои слова услышали?»',set:'queenAsks'}]},
+  choices:[{label:'«Да. Ваши слова дошли» — отпустить колокол',to:'END_codicil',special:'Финал'},
+           {label:'Сказать всю правду, как было в истории',to:'END_truth',special:'Финал'},
+           {label:'Промолчать, вернуться в петлю',to:'L1_bell',arr:true}]},
+
+END_bootstrap:{eye:'Наши дни · Архив Индий',clock:'—',title:'Рука истории',end:true,
+  body:`Колокол бьёт — ты снова у гробницы. Выходишь в Архив Индий. Под стеклом — та самая карта. Северный берег обведён тонкой линией. На табличке: «автор пометки неизвестен, рука нехарактерна для эпохи». Ты подносишь ладонь к стеклу. Линия совпадает с движением твоей кисти.`,
+  bodyEnd:`Ты вышел из музея, зная, что ты — сноска в истории, которую никто не прочтёт.`,choices:[]},
+END_inverse:{eye:'Наши дни · Собор',clock:'—',title:'Дверь домой',end:true,
+  body:`Ты просыпаешься у гробницы, колени дрожат. Свободен. Но в отражении бронзового короля — на миг — лицо Беатриз, у свечи, над картой, повторяющей твой день вечно, чтобы ты мог уйти.`,
+  bodyEnd:`Ты вернулся домой. Кто-то остался держать дверь открытой. Ты знаешь кто.`,choices:[]},
+END_sacrifice:{eye:'1504 · Триана, рассвет',clock:'Рассвет',title:'Остаться',end:true,
+  body:`Ты отдаёшь Беатриз астролябий и садишься на её место у свечи. Она выходит в утро, которого не видела сто петель, — свободная, живая, забывающая. Кольцо ложится тебе на плечи.`,
+  bodyEnd:`Ты выбрал петлю, чтобы кто-то вышел в утро. Севилья приняла тебя навсегда.`,choices:[]},
+END_codicil:{eye:'Рассвет над Севильей',clock:'Рассвет',title:'Слова королевы',end:true,
+  body:`Ты говоришь: «Ваши слова дошли». И отпускаешь верёвку в щель между двумя ударами. Кольцо не затвердевает — оно раскрывается. Ты падаешь домой, а за спиной писец дописывает строку о милосердии к заморским людям.`,
+  bodyEnd:`Ты проснулся у гробницы на рассвете. Колокол молчал. Кольцо отпустило.`,choices:[]},
+END_truth:{eye:'Покой королевы',clock:'—',title:'Вся правда',end:true,
+  body:`Ты говоришь королеве всё: что её слова впишут, но обойдут; что золото Индий поднимет Севилью до небес и опустошит её. Она долго молчит. «Спасибо, что не солгал. Тогда я отдам последние силы не славе — словам».`,
+  bodyEnd:`Ты вернулся в наши дни с тяжестью знания, которое нельзя ни с кем разделить.`,choices:[]},
+END_magellan:{eye:'1519 · Устье Гвадалквивира',clock:'—',title:'Уплыть вперёд',end:true,
+  body:`Однажды ты не идёшь к колоколу. Ты идёшь на корабль. Петля, не найдя тебя у башни, рвётся вперёд — и выносит тебя на пятнадцать лет, в 1519-й, когда от этой реки уходит флот Магеллана обогнуть земной шар. Севилья тает за кормой.`,
+  bodyEnd:`Ты ушёл в первое кругосветное плавание. Дом теперь — везде и нигде.`,choices:[]},
+END_spin:{eye:'Наши дни · Собор',clock:'—',title:'Верчёный волчок',end:true,
+  body:`Ты возвращаешься домой. Всё на месте. Но из кармана выпадает монета чеканки 1504 года — якорь, который не должен был пройти. Она падает на мрамор и крутится. И крутится. И не падает. Какой слой настоящий — тот порт или этот собор?`,
+  bodyEnd:`Монета всё крутится. Ты так и не узнаешь, проснулся ли.`,choices:[]},
+};
+
+function val(x){return typeof x==='function'?x():x;}
+function canShow(c){
+  if(c.need && !has(c.need)) return false;
+  if(c.needLoopMin && S.loop<c.needLoopMin) return false;
+  if(c.need2 && !c.need2.every(i=>item(i))) return false;
+  return true;
+}
+
+let CUR=null, DLG=null;
+function render(id,clock){
+  const s=SC[id]; CUR=id;
+  if(s.onEnter) S.flags[s.onEnter]=true;
+  if(s.set) S.flags[s.set]=true;
+  if(s.give) S.items[s.give]=true;
+  renderItems();
+  document.getElementById('bg').style.backgroundImage=`url('${IMGDIR}${IMG[id]}.png')`;
+  document.getElementById('hudLoop').textContent='Петля '+S.loop;
+  document.getElementById('hudClock').textContent=clock||s.clock||'—';
+
+  let h=`<div class="eyebrow">${s.eye}</div><div class="title">${s.title}</div>`;
+  h+=`<div class="body">${val(s.body)}</div>`;
+  if(s.note) h+=`<div class="note">↻ ${s.note}</div>`;
+  if(s.hint) h+=`<div class="note dim">${s.hint}</div>`;
+  h+=`<div class="choices">`;
+  if(s.npc) h+=`<button class="choice talk" onclick="openDialog('npc')"><span class="arr">💬</span><span>Заговорить — ${s.npc.name}</span></button>`;
+  if(s.npc2) h+=`<button class="choice talk" onclick="openDialog('npc2')"><span class="arr">💬</span><span>Заговорить — ${s.npc2.name}</span></button>`;
+  (s.choices||[]).forEach((c,i)=>{
+    if(!canShow(c)) return;
+    const cls=c.special?'choice special':'choice';
+    const tag=c.special?`<span class="tag">${c.special}</span>`:'';
+    h+=`<button class="${cls}" onclick="pick(${i})"><span class="arr">▸</span><span>${c.label}</span>${tag}</button>`;
+  });
+  if(s.end) h+=`<button class="restart" onclick="reset()">↺ Сыграть заново</button>`;
+  h+=`</div>`;
+  if(s.end) h=h.replace('<div class="choices">',`<div class="body end">${s.bodyEnd}</div><div class="choices">`);
+  document.getElementById('content').innerHTML=h;
+  document.getElementById('content').scrollTop=0;
+}
+
+function pick(i){
+  const visible=(SC[CUR].choices||[]).filter(canShow);
+  const c=visible[i];
+  if(c.flash) flash();
+  if(c.loop){ S.loop++; S.asked={}; }
+  if(c.set) S.flags[c.set]=true;
+  setTimeout(()=>render(c.to,c.clock), c.flash?440:0);
+}
+
+function openDialog(key){
+  DLG=key;
+  const npc=SC[CUR][key];
+  drawSheet(npc,key);
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('sheetScrim').classList.add('open');
+}
+function drawSheet(npc,key){
+  const por = npc.por
+    ? `<div class="por" style="background-image:url('${POR}${npc.por}.png')"></div>`
+    : `<div class="por mono">${npc.name[0]}</div>`;
+  let log=`<div class="bubble them">${npc.greet}</div>`;
+  npc.qa.forEach((qa,i)=>{
+    if(S.asked[CUR+'_'+key+'_'+i]) log+=`<div class="bubble me">${qa.q}</div><div class="bubble them">${qa.a}</div>`;
+  });
+  if(S.asked[CUR+'_'+key+'_free']) log+=`<div class="bubble them" style="opacity:.7">«…» <span style="font-size:11px">(в проде — ответ ИИ в образе)</span></div>`;
+  let chips=`<div class="chips">`;
+  npc.qa.forEach((qa,i)=>{
+    const asked=S.asked[CUR+'_'+key+'_'+i]?'asked':'';
+    chips+=`<button class="chip ${asked}" onclick="ask('${key}',${i})">${qa.q}</button>`;
+  });
+  chips+=`</div>`;
+  document.getElementById('sheet').innerHTML=
+    `<div class="handle" onclick="closeDialog()"></div>
+     <div class="sheet-head">${por}<div><div class="por-name">${npc.name}</div><div class="por-role">${npc.role}</div></div></div>
+     <div class="log" id="log">${log}</div>
+     ${chips}
+     <div class="free"><input id="freeIn" placeholder="Спросить своё…"><button onclick="askFree()">→</button></div>
+     <button class="farewell" onclick="closeDialog()">Попрощаться</button>`;
+  const lg=document.getElementById('log'); lg.scrollTop=lg.scrollHeight;
+}
+function ask(key,i){
+  const npc=SC[CUR][key];
+  const qa=npc.qa[i];
+  S.asked[CUR+'_'+key+'_'+i]=true;
+  if(qa.set) S.flags[qa.set]=true;
+  if(qa.give){ S.items[qa.give]=true; renderItems(); }
+  drawSheet(npc,key);
+}
+function askFree(){
+  const inp=document.getElementById('freeIn');
+  if(!inp.value.trim()) return;
+  S.asked[CUR+'_'+DLG+'_free']=true;
+  drawSheet(SC[CUR][DLG],DLG);
+}
+function closeDialog(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('sheetScrim').classList.remove('open');
+  render(CUR); // показать выборы, открывшиеся после разговора
+}
+function flash(){
+  const f=document.getElementById('flash');
+  f.style.opacity='.85'; setTimeout(()=>f.style.opacity='0',220);
+}
+function reset(){ S.loop=1; S.flags={}; S.items={}; S.asked={}; render('p0_cathedral','—'); }
+
+// ── музыка ──
+const music=document.getElementById('music');
+music.volume=0.4;
+let musicOn=true, musicStarted=false;
+function startMusic(){
+  if(musicStarted||!musicOn) return;
+  music.play().then(()=>{ musicStarted=true; }).catch(()=>{});
+}
+function toggleMusic(e){
+  if(e) e.stopPropagation();
+  musicOn=!musicOn;
+  const btn=document.getElementById('musicBtn');
+  const icon=document.getElementById('musicIcon');
+  if(musicOn){
+    btn.classList.remove('muted');
+    icon.innerHTML='<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>';
+    music.play().then(()=>{musicStarted=true;}).catch(()=>{});
+  }else{
+    btn.classList.add('muted');
+    icon.innerHTML='<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><line x1="2" y1="2" x2="22" y2="22" stroke-width="2.2"/>';
+    music.pause();
+  }
+}
+// автостарт с первого касания (политика браузеров)
+window.addEventListener('pointerdown', startMusic, { once:false });
+
+render('p0_cathedral','—');
+music.play().then(()=>{musicStarted=true;}).catch(()=>{}); // попытка автостарта
+</script>
+</body>
+</html>
