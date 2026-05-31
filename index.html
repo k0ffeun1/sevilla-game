@@ -144,7 +144,7 @@ body{background:#080604;font-family:var(--font-text);color:var(--text);min-heigh
   <button class="music-btn" id="musicBtn" onclick="toggleMusic(event)" title="Музыка">
     <svg id="musicIcon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
   </button>
-  <audio id="music" loop preload="auto" src="art/lumiere.mp3"></audio>
+  <audio id="music" loop preload="none" src="art/lumiere.mp3"></audio>
 
   <div id="flash"></div>
 </div>
@@ -152,6 +152,7 @@ body{background:#080604;font-family:var(--font-text);color:var(--text);min-heigh
 <script>
 const IMGDIR='art/';
 const POR=IMGDIR+'portraits/';
+const EXT='webp'; // публичная веб-версия переопределяет на 'webp'
 
 const IMG={ p0_cathedral:'01_cathedral',p0_leave:'01_cathedral',p0_fall:'02_fall',
  L1_arenal:'03_arenal',L1_torre:'04_torre',L1_cathedral_site:'05_cathedral_site',
@@ -179,14 +180,14 @@ p0_leave:{eye:'Наши дни',clock:'—',title:'Ты отнимаешь ру�
   body:`Колокол стихает. Собор снова просто собор. Ты идёшь дальше — к обычной прогулке.`,
   bodyEnd:`Иногда дверь нужно толкнуть, чтобы она открылась. Ты прошёл мимо.`,choices:[]},
 p0_fall:{eye:'Наши дни · Время гнётся',clock:'—',title:'Свет идёт назад',
-  body:`Звон не затихает — он втягивается обратно в колокол. Свет сворачивается воронкой. Пол под тобой становится водой. Четыре бронзовых короля поворачивают головы и смотрят на тебя.`,
+  body:`Звон не затихает — он втягивается обратно в колокол, нота за нотой, будто кто-то отматывает время. Свет в нефе сворачивается в воронку. Бронза под ладонью теплеет и размягчается, тянет пальцы внутрь.<br><br>Четыре короля медленно — все разом — поворачивают головы и смотрят на тебя. Пустые литые глазницы. Один беззвучно шевелит губами, и ты читаешь по ним собственное имя.<br><br>Пол перестаёт быть полом. Ты проваливаешься сквозь камень, сквозь пять веков, в невесомости, где нет верха и низа, — и где-то там, внизу, уже пахнет солью.`,
   choices:[{label:'Падать',to:'L1_arenal',flash:true,clock:'Полдень'}]},
 
 L1_arenal:{eye:'1504 · Причал Ареналь',clock:'Полдень',title:'Порт начала мира',
   body:()=>S.loop===1
-   ?`Каравеллы покачиваются, с них катят бочки, кричат на десяти языках. Вверх по реке — Золотая башня. Пахнет смолой и пряностями из-за океана. Молодой моряк ловит тебя за плечо.`
-   :`Снова причал. Снова крик: «Эй, ты белый как парус. Первый раз в порту?» Родриго не помнит. Ты помнишь всё.`,
-  npc:{name:'Родриго',role:'моряк',greet:'«Держись меня, сухопутный. Тут зазеваешься — оберут до нитки».',
+   ?`Доски. Горячие, занозистые доски под щекой — вот первое, что возвращается. Потом солнце сквозь веки. Ты лежишь, и сердце колотится так, будто ты и впрямь откуда-то упал.<br><br>Собор. Колокол. Ладонь на бронзе. Это было секунду назад — ты помнишь холод металла. Но под пальцами теперь мокрое дерево, и пахнет не пылью и ладаном, а смолой, рыбой и солью. «Сон, — думаешь ты. — Сейчас проснусь». Не просыпаешься.<br><br>Поднимаешь голову — и шум обрушивается весь разом: скрип канатов, крик чаек, ругань на чужих языках. Зрение медленно наводится на резкость, и ты ему не веришь. Каравеллы. Лес мачт. С бортов катят бочки, волокут тюки, кричат на генуэзском и кастильском. Вверх по реке золотится незнакомая башня. Это не музей и не сон — оно потеет, дышит и живёт.<br><br>Молодой моряк замечает, как ты сидишь на досках пришибленным мешком, и хохочет.`
+   :`Доски под щекой. Солнце сквозь веки. Тот же крик: «Эй, ты белый как парус. Первый раз в порту?»<br><br>Только на этот раз ты знаешь ответ. Знаешь, что будет дальше — слово в слово. Родриго тебя не помнит. А ты помнишь всё: и эту улыбку, и колокол в полночь, и то, чем всё кончится. Снова.`,
+  npc:{name:'Родриго',role:'моряк',greet:'«Эй, ты белый как парус! Первый раз в порту? Держись меня, сухопутный — тут зазеваешься, оберут до нитки».',
     qa:[{q:'Какой сейчас год?',a:'«Тысяча пятьсот четвёртый. Ты головой не ударился? Идём, налью».'},
         {q:'Что это за корабли?',a:'«Из Индий, из-за Моря-океана. Я сам ходил с Адмиралом. Видишь старика на башне? Это он».'},
         {q:'Какой старик?',a:'«Колон. Адмирал Моря-океана. Вернулся месяц назад, больной, злой. Корона всё обещала — отняла всё».'}]},
@@ -324,7 +325,7 @@ function render(id,clock){
   if(s.set) S.flags[s.set]=true;
   if(s.give) S.items[s.give]=true;
   renderItems();
-  document.getElementById('bg').style.backgroundImage=`url('${IMGDIR}${IMG[id]}.png')`;
+  document.getElementById('bg').style.backgroundImage=`url('${IMGDIR}${IMG[id]}.${EXT}')`;
   document.getElementById('hudLoop').textContent='Петля '+S.loop;
   document.getElementById('hudClock').textContent=clock||s.clock||'—';
 
@@ -366,7 +367,7 @@ function openDialog(key){
 }
 function drawSheet(npc,key){
   const por = npc.por
-    ? `<div class="por" style="background-image:url('${POR}${npc.por}.png')"></div>`
+    ? `<div class="por" style="background-image:url('${POR}${npc.por}.${EXT}')"></div>`
     : `<div class="por mono">${npc.name[0]}</div>`;
   let log=`<div class="bubble them">${npc.greet}</div>`;
   npc.qa.forEach((qa,i)=>{
@@ -441,6 +442,24 @@ window.addEventListener('pointerdown', startMusic, { once:false });
 
 render('p0_cathedral','—');
 music.play().then(()=>{musicStarted=true;}).catch(()=>{}); // попытка автостарта
+
+// ── фоновая подгрузка картинок по порядку сюжета ──
+// пока человек читает первый экран, тихо качаем 2,3,4… затем концовки и портреты
+const PRELOAD=[
+  '02_fall','03_arenal','04_torre','05_cathedral_site','06_triana_tavern','07_bell',
+  '08_casa','09_delacosa','10_columbus_secret','11_paradox','12_inverse','13_queen',
+  '14_end_bootstrap','15_end_inverse','16_end_sacrifice','17_end_codicil','18_end_truth',
+  '19_end_magellan','20_end_spin',
+  'portraits/columbus','portraits/beatriz','portraits/vespucci','portraits/isabella'
+];
+function preloadSeq(i){
+  if(i>=PRELOAD.length) return;
+  const im=new Image();
+  im.onload=im.onerror=()=>preloadSeq(i+1); // следующая только после текущей — порядок и щадящий канал
+  im.src=IMGDIR+PRELOAD[i]+'.'+EXT;
+}
+// стартуем чуть позже, чтобы первый экран отрисовался первым
+setTimeout(()=>preloadSeq(0), 600);
 </script>
 </body>
 </html>
