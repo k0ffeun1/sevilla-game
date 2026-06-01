@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пророчество Хиральды · Акт 1 (эталон)</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#e8b860; --bg:#070605; --ring-1:#171411; --ring-2:#26221d;
+  --text:rgba(255,255,255,.9); --dim:rgba(255,255,255,.45);
+  --font-title:'Montserrat',sans-serif; --font-text:'Mulish',sans-serif;
+}
+body{background:#040303;font-family:var(--font-text);color:var(--text);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;padding:26px 16px 60px;}
+.h1{font-family:var(--font-title);font-size:12px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.sub{font-size:12px;color:var(--dim);margin-bottom:18px;text-align:center;max-width:390px;line-height:1.5;}
+
+.phone{width:390px;max-width:100%;height:800px;position:relative;border-radius:40px;
+  background:var(--bg);box-shadow:0 0 0 9px var(--ring-1),0 0 0 10px var(--ring-2),0 30px 72px rgba(0,0,0,.9);
+  overflow:hidden;display:flex;flex-direction:column;}
+.scene-bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:opacity .5s;}
+.scrim{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(4,3,2,.5) 0%,rgba(4,3,2,.66) 45%,rgba(4,3,2,.82) 100%);}
+.hud,.goal,.stage{position:relative;z-index:2;}
+
+.hud{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:16px 22px 0;font-family:var(--font-title);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;}
+.hud .who{color:var(--gold);font-weight:700;}
+.hud .grain{font-weight:600;font-size:10px;}
+.grain.believe{color:#9fd0ff;} .grain.deny{color:#e89a7a;} .grain.waver{color:var(--dim);}
+/* строка цели */
+.goal{flex-shrink:0;margin:10px 22px 0;padding:8px 12px;border:1px solid rgba(232,184,96,.22);
+  border-radius:10px;background:rgba(232,184,96,.05);font-size:11.5px;color:rgba(232,184,96,.85);
+  display:flex;align-items:center;gap:7px;}
+.goal b{color:#fff;font-weight:600;}
+
+.stage{position:absolute;left:0;right:0;bottom:0;height:46%;z-index:2;overflow:hidden;
+  padding:12px 22px 18px;display:flex;flex-direction:column;}
+.eyebrow{font-family:var(--font-title);font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:9px;flex-shrink:0;}
+.title{font-family:var(--font-title);font-size:21px;font-weight:600;letter-spacing:.5px;
+  color:#fff;margin-bottom:13px;line-height:1.2;flex-shrink:0;}
+.body{font-size:14.5px;line-height:1.7;color:var(--text);}
+.body p{margin-bottom:13px;} .body p:last-child{margin-bottom:0;}
+.body.end{font-style:italic;color:var(--gold);border-top:1px solid rgba(232,184,96,.3);
+  margin-top:16px;padding-top:14px;}
+.note{font-size:12px;color:rgba(255,255,255,.5);margin:13px 0 0;font-style:italic;
+  border-left:2px solid rgba(232,184,96,.4);padding-left:11px;}
+
+/* листание по абзацам */
+.pagewrap{cursor:pointer;-webkit-tap-highlight-color:transparent;flex:1;display:flex;flex-direction:column;min-height:0;}
+.page{flex:1;min-height:0;overflow:hidden;border:1px solid rgba(232,184,96,.28);background:rgba(8,6,4,.66);
+  backdrop-filter:blur(4px);border-radius:16px;padding:20px;font-size:18px;line-height:1.5;color:var(--text);
+  animation:fade .38s ease;display:flex;flex-direction:column;justify-content:center;box-shadow:0 10px 34px rgba(0,0,0,.5);}
+.page p{margin:0;}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:14px;flex-shrink:0;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.16);transition:.2s;}
+.dot.on{background:var(--gold);transform:scale(1.15);}
+.taphint{text-align:center;font-size:11px;color:rgba(232,184,96,.6);margin-top:13px;
+  letter-spacing:1.5px;animation:tap 1.7s ease-in-out infinite;flex-shrink:0;}
+@keyframes tap{0%,100%{opacity:.35}50%{opacity:.95}}
+.navrow{display:flex;margin-top:12px;flex-shrink:0;}
+.backbtn{background:none;border:1px solid rgba(255,255,255,.14);color:var(--dim);border-radius:10px;
+  padding:7px 14px;font-family:var(--font-title);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.15s;}
+.backbtn:hover:not([disabled]){color:#fff;border-color:rgba(255,255,255,.3);}
+.backbtn[disabled]{opacity:.22;cursor:default;}
+
+.choices{margin-top:14px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.choice{text-align:left;background:rgba(10,8,5,.66);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.16);
+  color:#fff;border-radius:13px;padding:13px 16px;font-family:var(--font-text);font-size:14px;
+  cursor:pointer;transition:.16s;display:flex;align-items:center;gap:10px;line-height:1.4;}
+.choice:hover{background:rgba(232,184,96,.12);border-color:rgba(232,184,96,.45);transform:translateX(2px);}
+.choice .arr{color:var(--gold);font-size:12px;flex-shrink:0;}
+.choice.special{border-color:rgba(232,184,96,.4);background:rgba(232,184,96,.1);}
+.choice .tag{margin-left:auto;font-family:var(--font-title);font-size:8px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);opacity:.85;flex-shrink:0;}
+.choice .mood{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:1px;flex-shrink:0;}
+.mood.b{color:#9fd0ff;} .mood.d{color:#e89a7a;}
+.restart{margin-top:14px;width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.16);
+  color:var(--dim);border-radius:11px;padding:11px;font-family:var(--font-title);font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.restart:hover{color:#fff;border-color:rgba(255,255,255,.3);}
+
+.gender{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px;text-align:center;}
+.gender h2{font-family:var(--font-title);font-size:18px;font-weight:600;color:#fff;margin-bottom:10px;letter-spacing:1px;}
+.gender p{font-size:13px;color:var(--dim);margin-bottom:28px;line-height:1.55;max-width:310px;}
+.gchoice{display:flex;gap:14px;}
+.gcard{width:135px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:18px;
+  padding:22px 14px;cursor:pointer;transition:.18s;}
+.gcard:hover{background:rgba(232,184,96,.12);border-color:var(--gold);transform:translateY(-3px);}
+.gcard .mono{width:54px;height:54px;border-radius:50%;background:rgba(232,184,96,.14);margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-size:24px;font-weight:700;color:var(--gold);}
+.gcard .gn{font-family:var(--font-title);font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;}
+.gcard .gd{font-size:11px;color:var(--dim);}
+
+.sheet-scrim{position:absolute;inset:0;z-index:40;background:rgba(2,2,1,.55);opacity:0;pointer-events:none;transition:.3s;}
+.sheet-scrim.open{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;height:78%;
+  background:linear-gradient(to bottom,#15110c,#0a0807);border-radius:26px 26px 40px 40px;
+  border-top:1px solid rgba(232,184,96,.25);box-shadow:0 -20px 50px rgba(0,0,0,.75);
+  transform:translateY(100%);transition:transform .34s cubic-bezier(.22,1,.36,1);
+  display:flex;flex-direction:column;padding:12px 20px 20px;}
+.sheet.open{transform:translateY(0);}
+.handle{width:42px;height:4px;border-radius:3px;background:rgba(255,255,255,.25);margin:0 auto 14px;cursor:pointer;}
+.sheet-head{display:flex;align-items:center;gap:13px;margin-bottom:14px;flex-shrink:0;}
+.por{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(232,184,96,.14);border:1.5px solid rgba(232,184,96,.5);
+  font-family:var(--font-title);font-size:21px;font-weight:700;color:var(--gold);}
+.por-name{font-family:var(--font-title);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;}
+.por-role{font-size:12px;color:var(--gold);margin-top:2px;}
+.log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:11px;padding-right:4px;margin-bottom:12px;}
+.log::-webkit-scrollbar{width:3px;} .log::-webkit-scrollbar-thumb{background:rgba(232,184,96,.3);border-radius:3px;}
+.bubble{font-size:14px;line-height:1.55;}
+.bubble.them{color:#fff;font-style:italic;}
+.bubble.me{color:var(--gold);text-align:right;font-weight:600;}
+.bubble.me::before{content:"› ";opacity:.6;}
+.chips{display:flex;flex-direction:column;gap:7px;flex-shrink:0;margin-bottom:10px;}
+.chip{text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.85);border-radius:11px;padding:9px 13px;font-family:var(--font-text);font-size:13px;cursor:pointer;transition:.15s;}
+.chip:hover{background:rgba(232,184,96,.13);border-color:rgba(232,184,96,.4);}
+.chip.asked{opacity:.4;pointer-events:none;}
+.free{display:flex;gap:7px;flex-shrink:0;margin-bottom:10px;}
+.free input{flex:1;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  padding:9px 12px;color:#fff;font-family:var(--font-text);font-size:13px;}
+.free input::placeholder{color:rgba(255,255,255,.3);}
+.free button{background:rgba(232,184,96,.16);border:1px solid rgba(232,184,96,.4);color:var(--gold);
+  border-radius:10px;padding:0 15px;font-family:var(--font-title);font-size:13px;cursor:pointer;}
+.farewell{flex-shrink:0;background:none;border:1px solid rgba(232,184,96,.35);color:var(--gold);
+  border-radius:11px;padding:11px;font-family:var(--font-title);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.farewell:hover{background:rgba(232,184,96,.1);}
+</style>
+</head>
+<body>
+
+<div class="h1">Пророчество Хиральды · Акт 1 — эталон</div>
+<div class="sub">Переработанный первый акт. Каждый выбор введён в тексте. Сверху — текущая цель. Сцены полнее, переходы плавные. Оцени уровень — по нему докручу остальное.</div>
+
+<div class="phone">
+  <div class="scene-bg" id="bg"></div>
+  <div class="scrim"></div>
+  <div class="hud">
+    <div class="who" id="hudWho"></div>
+    <div class="grain waver" id="hudGrain"></div>
+  </div>
+  <div class="goal" id="goal" style="display:none">◆ Сейчас: <b id="goalText"></b></div>
+  <div class="stage" id="stage"></div>
+  <div class="sheet-scrim" id="sheetScrim" onclick="closeDialog()"></div>
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+let HERO='', LOVE='';
+function setGender(g){
+  S.gm=g;
+  if(g==='m'){ HERO='Марк'; LOVE='Лусия'; } else { HERO='Ника'; LOVE='Андрес'; }
+  document.querySelector('.sub').style.display='none';
+  render('prologue');
+}
+function sub(t){
+  if(!t) return t;
+  const hf=(S.gm==='f');
+  const map={
+    '{Г}':HERO,'{Р}':LOVE,
+    '{полюбил}':hf?'полюбила':'полюбил','{встретил}':hf?'встретила':'встретил',
+    '{понял}':hf?'поняла':'понял','{увидел}':hf?'увидела':'увидел','{сам}':hf?'сама':'сам',
+    '{устал}':hf?'устала':'устал','{подумал}':hf?'подумала':'подумал','{замер}':hf?'замерла':'замер',
+    '{решил}':hf?'решила':'решил','{один}':hf?'одна':'один','{готов}':hf?'готова':'готов'
+  };
+  for(const k in map) t=t.split(k).join(map[k]);
+  return t;
+}
+
+const S={ gm:'m', flags:{}, grain:0, asked:{}, grainShown:false, history:[], page:0 };
+function has(f){return !!S.flags[f];}
+function renderHud(){
+  document.getElementById('hudWho').textContent=HERO||'';
+  const g=document.getElementById('hudGrain');
+  if(S.grain>0){ g.className='grain believe'; g.textContent='● веришь городу'; }
+  else if(S.grain<0){ g.className='grain deny'; g.textContent='● ищешь объяснение'; }
+  else { g.className='grain waver'; g.textContent='○ колеблешься'; }
+}
+
+// фоны сцен (рандом из timeloop, по смыслу)
+const IMGDIR='art/';
+const IMG={
+  prologue:'13_queen', a1_start:'01_cathedral', a1_tower_glance:'05_cathedral_site',
+  a1_pension:'06_triana_tavern', a1_room:'10_columbus_secret', a1_courtyard:'09_delacosa',
+  a1_alley:'12_inverse', a1_sleep:'02_fall', a1_cathedral:'11_paradox'
+};
+function setBg(id){
+  const bg=document.getElementById('bg');
+  if(IMG[id]) bg.style.backgroundImage=`url('${IMGDIR}${IMG[id]}.webp')`;
+  else bg.style.backgroundImage='none';
+}
+
+// ── АКТ 1 (эталон) ──
+const SC={
+
+prologue:{eye:'Севилья · год 1504 · перед рассветом',title:'Та, что видит',
+  body:`<p>Темнота. Одна свеча. Каменная башня без окон, и в ней — женщина в платье королевского кроя, с лицом, не спавшим много ночей. Она говорит без остановки, лихорадочно, а сгорбленный писарь едва успевает макать перо — рука его дрожит, и не от холода.</p>
+  <p>«…город за морем, которого ещё нет на картах… корабль, что уйдёт и не вернётся… огонь в шестьдесят шестом году в городе на острове…» — она перечисляет, будто читает с невидимой страницы, которую видит только она.</p>
+  <p>И вдруг — замолкает. Поднимает голову. Смотрит в темноту перед собой — мимо писаря, мимо стен, <i>прямо сквозь</i>, — туда, где сейчас находишься ты. Её глаза находят тебя через пятьсот лет.</p>
+  <p>«А вот и он, — выдыхает она. — Запиши имя. Его будут звать <b>{Г}</b>. {Г} из рода Аро. Он придёт в Севилью ночью, {один}, и… — она хмурится, подбирая слово, которого в её веке ещё нет, — …он опоздает на <i>поезд</i>».</p>
+  <p>Перо замирает. «Ваше величество, — шепчет писарь, бледнея, — что такое… <i>поезд</i>?»</p>
+  <p>За дверью лязгает засов. Грубый мужской голос, привыкший приказывать: «Довольно. Вы слышали — она бредит словами, которых нет. Королева больна. Страницу — в огонь. Её — в башню, и пусть Кастилия думает, что она умерла».</p>
+  <p>Её хватают под руки. Свеча падает. И в последнюю секунду, пока её волокут во тьму, она кричит — не им, а <b>тебе</b>, через все эти годы: «{Г}! Найди мою страницу! Найди её, пока не нашли они!»</p>
+  <p>Темнота.</p>
+  <p style="text-align:center;color:var(--gold);letter-spacing:4px;font-family:var(--font-title);font-size:13px;margin-top:22px">СЕВИЛЬЯ · НАШИ ДНИ</p>`,
+  choices:[
+    {label:'…проснуться в наши дни',to:'a1_start',arr:true}]},
+
+a1_start:{eye:'Наши дни · Севилья, 23:40',title:'Опоздал',
+  goal:'Найти, где переночевать',
+  body:`<p>Ты вздрагиваешь и открываешь глаза. Жёсткая лавка ночного вокзала, гулкий пустой зал, табло над платформой: <b>23:40</b>. Ты задремал — на минуту, может, на две, — сидя в ожидании пересадки, и сон был такой плотный, что ты всё ещё слышишь чужой голос, кричащий твоё имя сквозь века.</p>
+  <p>И тут до тебя доходит <i>другой</i> звук: шипение дверей и нарастающий гул. Твой поезд. Он трогается. Ты вскакиваешь, бежишь по перрону, рюкзак бьёт по спине, рука падает на поручень последнего вагона — и поезд уходит. Не на минуту раньше. На секунду. Красные огни тают в темноте. Следующий только утром.</p>
+  <p>«…опоздает на поезд», — сказал во сне голос, которого не может быть. Ты гонишь эту мысль. Совпадение. Просто задремал не вовремя — вот и всё.</p>
+  <p>И вот ты на площади, которой не выбирал. Севилья в полночь дышит тёплым камнем и горьковатым апельсином. Рюкзак тянет плечо, на шее — старая плёночная камера, на которой за весь день так и не появилось ни кадра. Город не спит, но и тебя будто не замечает: пары идут под руку, где-то смеются, звякает посуда в невидимом баре.</p>
+  <p>Прямо перед тобой два пути. В глубине площади, подсвеченная снизу, поднимается огромная башня — колокольня собора, видно отовсюду. А справа, ближе, начинаются узкие переулки старого квартала, и над одной из дверей теплится вывеска: <i>«Habitaciones»</i> — комнаты.</p>
+  <p>«Одна ночь, — {подумал} ты. — Утром меня тут не будет».</p>`,
+  choices:[
+    {label:'К вывеске «Habitaciones» в переулке — нужно где-то спать',to:'a1_pension',arr:true},
+    {label:'Сначала дойти до подсвеченной башни — всё равно не уснуть сразу',to:'a1_tower_glance',arr:true}]},
+
+a1_tower_glance:{eye:'Наши дни · Площадь у собора',title:'Башня заметила',
+  goal:'Найти, где переночевать',
+  body:`<p>Ты идёшь к башне, задрав голову. Вблизи она огромна — кирпич, узоры, бывший минарет, ставший колокольней, когда город сменил веру, но не камни. На самом верху медленно поворачивается флюгер.</p>
+  <p>И тут — глупость, усталость, что угодно — тебе кажется, что башня <i>наклонилась</i>. Чуть-чуть, к тебе. Колокол наверху бьёт один раз, хотя до часа далеко. По спине проходит холодок, не от ночной прохлады.</p>
+  <p>Ты трёшь глаза. Башня стоит как стояла пятьсот лет. «Спать, — {решил} ты. — Мне нужно просто лечь». Вывеска «Habitaciones» всё ещё теплится за спиной, в переулке.</p>`,
+  grainNote:true,
+  choices:[
+    {label:'«Показалось. Я просто вымотан». Идти в пансион',to:'a1_pension',grain:-1,mood:'d'},
+    {label:'Сделать кадр башни на плёнку — вдруг что-то останется',to:'a1_pension',grain:1,mood:'b'}]},
+
+a1_pension:{eye:'Наши дни · Пансион в Санта-Крус',title:'Книга записей',
+  goal:'Понять, откуда тут твоя фамилия',
+  body:`<p>Узкая дверь, латунный звонок, запах воска и старого дерева. За стойкой — старуха с лицом, как печёное яблоко, и глазами, которые видят больше, чем говорят. Она поднимает на тебя взгляд — и держит его на полсекунды дольше, чем держат на чужом.</p>
+  <p>«Комната есть, — говорит она прежде, чем ты открыл рот. — Я знала, что кто-то придёт сегодня». Она разворачивает к тебе тяжёлую книгу записей в кожаном переплёте и протягивает ручку.</p>
+  <p>Ты опускаешь глаза к строке, где надо вписать имя, — и рука замирает. Строкой выше, выцветшими чернилами, которым на вид лет сто, уже стоит фамилия. Твоя. <b>Аро</b>. Тем же почерком, что и весь старинный список.</p>
+  <p>«Это… ошибка?» — спрашиваешь ты. Старуха только пожимает плечами и пододвигает ручку ближе.</p>`,
+  npc:{name:'донья Ампаро',role:'хозяйка пансиона',
+    greet:'«Не пугайся почерка. Эта книга старше меня. Имена в ней иногда возвращаются».',
+    qa:[
+      {q:'Откуда здесь моя фамилия — Аро?',a:'«Аро — старая севильская фамилия. Думаешь, ты чужой тут? У тебя лицо не туристическое. Лицо — отсюда. Я такие лица узнаю».',set:'nameSeen'},
+      {q:'Вы правда меня ждали?',a:'«Я в моём возрасте никого не жду. Но дом — ждёт. Дома помнят дольше людей. Бери ключ, комната в глубине, окно во внутренний дворик».'},
+      {q:'Что за дворик?',a:'«Тихий. Фонтан там. Если ночью услышишь, будто кто-то зовёт, — это вода. Так себе и говори: это вода. И спи».'}]},
+  choices:[
+    {label:'Вписать имя, взять ключ, идти в комнату',to:'a1_room',arr:true}]},
+
+a1_room:{eye:'Наши дни · Комната с окном во двор',title:'Голос во дворе',
+  goal:'Решить: уснуть или разобраться',
+  body:`<p>Комната крохотная: кровать, стул, побелённые стены, тёмная балка под потолком. Ты бросаешь рюкзак, садишься — и впервые за день тишина наваливается по-настоящему. Где-то журчит фонтан во дворе.</p>
+  <p>Ты почти проваливаешься в сон, когда сквозь журчание проступает <i>другое</i>. Голос. Не громкий — будто кто-то во дворе тихо повторяет одно слово, снова и снова. И слово это — похоже — твоё имя.</p>
+  <p>«Это вода», — повторяешь ты слова старухи и подходишь к окну. Внизу — тёмный дворик, апельсиновое дерево, фонтан. Никого. Но на дальней белёной стене, в пятне лунного света, что-то выцарапано: знак. Половина солнца, половина глаза. Старый, глубокий. И ты готов поклясться, что секунду назад его там не было.</p>`,
+  choices:[
+    {label:'Спуститься во двор, рассмотреть знак вблизи',to:'a1_courtyard',grain:1,mood:'b'},
+    {label:'«Это вода, это луна, я устал». Лечь спать',to:'a1_sleep',grain:-1,mood:'d'}]},
+
+a1_courtyard:{eye:'Наши дни · Внутренний дворик',title:'Знак солнце-глаз',
+  goal:'Узнать, что значит знак',
+  body:`<p>Босиком по тёплым плиткам ты выходишь во двор. Фонтан говорит сам с собой. Знак на стене — вблизи он ещё старше, чем казался: врезан глубоко, края стёрты временем. Половина солнца, половина глаза. Будто кто-то хотел сказать «смотри» и «свет» одним движением руки.</p>
+  <p>«Ты тоже его видишь?» — голос из тени заставляет тебя вздрогнуть. Из-за апельсинового дерева выходит мальчишка лет десяти, чумазый, быстрый, явно тут свой. Смотрит на знак, потом на тебя — с уважением, какого не ждёшь от ребёнка.</p>`,
+  npc:{name:'Тонио',role:'мальчишка с улицы',
+    greet:'«Туристы этот знак не видят — стёртый будто. А ты видишь. Значит, тебе можно».',
+    qa:[
+      {q:'Что это за знак?',a:'«Их много по кварталу. Если идти от одного к другому — складывается дорога. Бабка говорит, дорога для тех, кого город позвал. Я думал, это сказки. Пока тебя не увидел».',set:'symbolSeen'},
+      {q:'Куда ведёт дорога?',a:'«К башне сперва. Хиральда, во-он торчит над крышами. Потом дальше. Я бы показал, да ночью бабка заругает. Завтра найдёшь меня тут».'},
+      {q:'Кто ты такой?',a:'«Тонио. Я тут родился, в этих переулках. Всё знаю. Только одно запомни: если ночью позовут по имени — не оборачивайся сразу. Бабкин завет. Кому надо — тот поймёт».'}]},
+  choices:[
+    {label:'«К башне, говоришь?» Выйти к собору прямо сейчас',to:'a1_alley',arr:true},
+    {label:'Поблагодарить мальчишку, вернуться, лечь — утро вечера мудренее',to:'a1_sleep',arr:true}]},
+
+a1_alley:{eye:'Наши дни · Переулки к собору',title:'Silueta',
+  goal:'Дойти до башни',
+  body:`<p>Переулки Санта-Круса заплетаются, как нарочно. Ты идёшь на башню — её видно над крышами, — но улочки сворачивают, двоятся, выводят не туда. Город будто ведёт тебя своей дорогой, а не твоей.</p>
+  <p>На одном повороте ты {замер}. В конце узкого переулка, шагах в двадцати, кто-то стоит. Длинный тёмный плащ — не из этого века. Лицо в тени. Фигура не двигается. Она просто <i>смотрит на тебя</i> — и в этом взгляде нет угрозы, скорее узнавание, будто ждали именно тебя.</p>
+  <p>Ты моргаешь. Переулок пуст. Только качается фонарь, которого минуту назад не качало. И где-то близко, очень тихо, кто-то произносит твоё имя.</p>`,
+  grainNote:true,
+  choices:[
+    {label:'Обернуться на голос — кто меня зовёт?',to:'a1_cathedral',grain:1,mood:'b'},
+    {label:'«Не оборачивайся», — сказал мальчишка. Идти к башне, не оглядываясь',to:'a1_cathedral',grain:-1,mood:'d'}]},
+
+a1_sleep:{eye:'Видение · сон',title:'Женщина в башне',
+  goal:'Проснуться',
+  body:`<p>Ты ложишься, и сон забирает тебя сразу, как тёмная вода. И во сне — башня. Не снаружи, изнутри: голые каменные стены, одна свеча, и женщина в выцветшем платье королевского кроя. Она говорит — быстро, горячо, без остановки — в пустоту, будто диктует невидимому писцу.</p>
+  <p>Ты не слышишь слов. Только видишь, как она вдруг замолкает. Поворачивается. И смотрит <i>прямо на тебя</i> — сквозь сон, сквозь столетия, точно зная, что ты здесь. Её губы медленно складывают что-то очень похожее на твоё имя.</p>
+  <p>За её спиной из темноты выступает фигура в плаще — та самая, из переулка — и прижимает палец к губам. Молчи.</p>
+  <p>Ты просыпаешься рывком, в поту. За окном журчит фонтан. «Это вода», — шепчешь ты в темноту и сам себе не веришь.</p>`,
+  choices:[
+    {label:'Дождаться рассвета и идти к башне — теперь надо понять',to:'a1_cathedral',arr:true}]},
+
+a1_cathedral:{eye:'Наши дни · Собор и Хиральда',title:'Свет у лесов',
+  goal:'Дойти до того, кто работает у фрески',
+  body:`<p>Так или иначе ты выходишь к собору. Громада камня, и над ней — Хиральда, та самая башня, что наклонялась к тебе ночью. У бокового нефа леса реставрации затянуты мутной плёнкой, и за ними горит одинокая лампа: кто-то работает, хотя на часах глубокая ночь — или уже раннее утро, ты потерял счёт.</p>
+  <p>Ты подходишь ближе. Сквозь плёнку — тёплое пятно лампы и человек на лесах, склонившийся над фреской с тонким инструментом, счищающий вековую копоть. Из-под копоти проступает чьё-то лицо в одежде XVI века — пока только лоб, скула, краешек глаза.</p>
+  <p>И этот краешек глаза заставляет тебя {замер}еть. Что-то в нём — неправильно знакомое. Как фотография, которую ты будто бы видел, но не помнишь где. Ты делаешь ещё шаг, чтобы разглядеть всё лицо целиком —</p>
+  <p>— и реставратор резко оборачивается на твои шаги. Лампа качается, тень бросается по плёнке. Ты не видишь лица человека — только то, как {рн} застывает, увидев тебя, и роняет инструмент. «Боже мой, — выдыхает {рн} едва слышно. — Это не может быть…» Плёнка колышется и снова закрывает фреску. Лицо на стене опять уходит в тень.</p>
+  <p>Сердце колотится, а ты даже не {понял} почему. За ночь Севилья записала твою фамилию столетним почерком, позвала по имени из пустого двора, показала фигуру в плаще и женщину в башне. А теперь кто-то смотрит на тебя так, будто увидел покойника. Одна ночь стала вопросом, от которого уже не уехать утренним поездом: <i>что это за лицо под копотью — и почему всё в этом городе ведёт тебя именно к нему?</i></p>`,
+  end:true,
+  bodyEnd:`Конец Акта 1. Завтра ты вернёшься к лесам при свете дня — и наконец увидишь фреску целиком. В Акте 2 у лица появится имя. И, может, ты пожалеешь, что {увидел} его.`,
+  choices:[]},
+};
+
+function val(x){return typeof x==='function'?x():x;}
+let CUR=null, DLG=null, PAGES=[];
+
+// ── авто-разбивка текста на страницы по вместимости (по предложениям) ──
+const PAGE_LIMIT=200; // макс. видимых символов на страницу (подобрано под зону)
+function visLen(s){ return s.replace(/<[^>]+>/g,'').length; }
+function splitSentences(text){
+  const m=text.match(/[^.!?…]*[.!?…]+[»"')\]]*\s*|[^.!?…]+$/g);
+  return m||[text];
+}
+function buildPage(units){
+  let html='', prevP=null;
+  units.forEach(u=>{
+    if(prevP!==null && u.p!==prevP) html+='<br><br>';
+    else if(html) html+=' ';
+    html+=u.t; prevP=u.p;
+  });
+  return '<p>'+html+'</p>';
+}
+function paginate(html){
+  const paras=html.match(/<p[\s\S]*?<\/p>/g) || ['<p>'+html+'</p>'];
+  const pages=[]; let buf=[], len=0;
+  const flush=()=>{ if(buf.length){ pages.push(buildPage(buf)); buf=[]; len=0; } };
+  paras.forEach((p,pi)=>{
+    if(/style=/.test(p)){ flush(); pages.push(p); return; } // спец-абзац (титр) — целиком
+    const inner=p.replace(/^<p[^>]*>/,'').replace(/<\/p>$/,'').trim();
+    splitSentences(inner).forEach(s=>{
+      s=s.trim(); if(!s) return;
+      const l=visLen(s);
+      if(len>0 && len+l>PAGE_LIMIT) flush();
+      buf.push({t:s,p:pi,l}); len+=l;
+    });
+  });
+  flush();
+  return pages.length?pages:['<p></p>'];
+}
+
+function render(id, page, noPush){
+  const s=SC[id]; CUR=id;
+  if(!noPush) S.history.push(id);
+  if(s.set) S.flags[s.set]=true;
+  PAGES=paginate(sub(val(s.body)));
+  S.page = (page==='last') ? PAGES.length-1 : 0;
+  showPage();
+}
+
+function showPage(){
+  const s=SC[CUR];
+  renderHud();
+  setBg(CUR);
+  if(s.goal){ document.getElementById('goal').style.display='flex';
+    document.getElementById('goalText').textContent=sub(s.goal); }
+  else document.getElementById('goal').style.display='none';
+
+  const last = S.page>=PAGES.length-1;
+  // заголовок — только на первой странице сцены (освобождает место под текст)
+  let h = (S.page===0)
+    ? `<div class="eyebrow">${sub(s.eye)}</div><div class="title">${sub(s.title)}</div>`
+    : '';
+  // листаемая область (тап = следующая страница)
+  h+=`<div class="pagewrap" onclick="nextPage()">`;
+  h+=`<div class="page" key="${S.page}">${PAGES[S.page]}</div>`;
+  if(PAGES.length>1){ h+=`<div class="dots">`;
+    for(let i=0;i<PAGES.length;i++) h+=`<span class="dot${i===S.page?' on':''}"></span>`;
+    h+=`</div>`; }
+  if(!last) h+=`<div class="taphint">нажми, чтобы продолжить ▾</div>`;
+  h+=`</div>`; // конец pagewrap
+
+  // выборы — сразу под текстом, только на последней странице
+  if(last){
+    if(s.grainNote && !S.grainShown){ S.grainShown=true;
+      h+=`<div class="note">Как ты относишься к необъяснимому — запоминается. Веришь городу или ищешь объяснение: это поведёт к разным финалам.</div>`; }
+    if(s.end) h+=`<div class="body end">${sub(s.bodyEnd)}</div>`;
+    h+=`<div class="choices">`;
+    if(s.npc) h+=`<button class="choice special" onclick="openDialog('npc')"><span class="arr">💬</span><span>Заговорить — ${sub(s.npc.name)}</span></button>`;
+    (s.choices||[]).forEach((c,i)=>{
+      let tag='';
+      if(c.mood) tag=`<span class="mood ${c.mood}">${c.mood==='b'?'веришь':'не веришь'}</span>`;
+      else if(c.special) tag=`<span class="tag">${c.special}</span>`;
+      h+=`<button class="choice" onclick="pick(${i})"><span class="arr">▸</span><span>${sub(c.label)}</span>${tag}</button>`;
+    });
+    if(s.end) h+=`<button class="restart" onclick="reset()">↺ Сыграть Акт 1 заново</button>`;
+    h+=`</div>`;
+  }
+  // «назад» — в самом низу
+  const canBack = (S.page>0) || (S.history.length>1);
+  h+=`<div class="navrow"><button class="backbtn"${canBack?'':' disabled'} onclick="prevPage(event)">‹ назад</button></div>`;
+
+  document.getElementById('stage').innerHTML=h;
+}
+
+function nextPage(){ if(S.page<PAGES.length-1){ S.page++; showPage(); } }
+function prevPage(e){
+  if(e) e.stopPropagation();
+  if(S.page>0){ S.page--; showPage(); }
+  else if(S.history.length>1){
+    S.history.pop();                 // убрать текущую
+    const prev=S.history.pop();      // предыдущую render запишет заново
+    render(prev,'last');
+  }
+}
+function pick(i){
+  const c=SC[CUR].choices[i];
+  if(c.set) S.flags[c.set]=true;
+  if(c.grain) S.grain+=c.grain;
+  render(c.to);
+}
+
+function openDialog(key){ DLG=key; drawSheet(SC[CUR][key],key);
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('sheetScrim').classList.add('open'); }
+function drawSheet(npc,key){
+  const por=`<div class="por">${sub(npc.name)[0]}</div>`;
+  let log=`<div class="bubble them">${sub(npc.greet)}</div>`;
+  npc.qa.forEach((qa,i)=>{ if(S.asked[CUR+'_'+key+'_'+i])
+    log+=`<div class="bubble me">${sub(qa.q)}</div><div class="bubble them">${sub(qa.a)}</div>`; });
+  if(S.asked[CUR+'_'+key+'_free']) log+=`<div class="bubble them" style="opacity:.7">«…» <span style="font-size:11px">(в проде — ответ ИИ в образе)</span></div>`;
+  let chips=`<div class="chips">`;
+  npc.qa.forEach((qa,i)=>{ const a=S.asked[CUR+'_'+key+'_'+i]?'asked':'';
+    chips+=`<button class="chip ${a}" onclick="ask('${key}',${i})">${sub(qa.q)}</button>`; });
+  chips+=`</div>`;
+  document.getElementById('sheet').innerHTML=
+    `<div class="handle" onclick="closeDialog()"></div>
+     <div class="sheet-head">${por}<div><div class="por-name">${sub(npc.name)}</div><div class="por-role">${sub(npc.role)}</div></div></div>
+     <div class="log" id="log">${log}</div>${chips}
+     <div class="free"><input id="freeIn" placeholder="Спросить своё…"><button onclick="askFree()">→</button></div>
+     <button class="farewell" onclick="closeDialog()">Попрощаться</button>`;
+  const lg=document.getElementById('log'); lg.scrollTop=lg.scrollHeight;
+}
+function ask(key,i){
+  const npc=SC[CUR][key], qa=npc.qa[i];
+  S.asked[CUR+'_'+key+'_'+i]=true;
+  if(qa.set) S.flags[qa.set]=true;
+  drawSheet(npc,key);
+}
+function askFree(){ const inp=document.getElementById('freeIn');
+  if(!inp.value.trim()) return; S.asked[CUR+'_'+DLG+'_free']=true; drawSheet(SC[CUR][DLG],DLG); }
+function closeDialog(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('sheetScrim').classList.remove('open');
+  showPage();
+}
+function reset(){ S.flags={}; S.grain=0; S.asked={}; S.grainShown=false; S.history=[]; S.page=0; showGender(); }
+
+function showGender(){
+  document.querySelector('.sub').style.display='';
+  document.getElementById('bg').style.backgroundImage='none';
+  document.getElementById('hudWho').textContent='';
+  document.getElementById('hudGrain').textContent='';
+  document.getElementById('goal').style.display='none';
+  document.getElementById('stage').innerHTML=
+    `<div class="gender">
+       <h2>Кто ты в этой истории?</h2>
+       <p>Чужак, что опоздал на ночной поезд в Севилье. Город встретит тебя так, будто давно знает. Выбор определит твоё имя, того, кого ты встретишь, — и чьё лицо ждёт тебя на старой фреске.</p>
+       <div class="gchoice">
+         <div class="gcard" onclick="setGender('m')"><div class="mono">М</div><div class="gn">Марк Аро</div><div class="gd">путешественник</div></div>
+         <div class="gcard" onclick="setGender('f')"><div class="mono">Н</div><div class="gn">Ника Аро</div><div class="gd">путешественница</div></div>
+       </div>
+     </div>`;
+}
+showGender();
+</script>
+</body>
+</html>
